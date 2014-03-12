@@ -26,6 +26,7 @@ import com.googlecode.objectify.impl.Keys;
 import com.googlecode.objectify.impl.ObjectifyImpl;
 import com.googlecode.objectify.impl.Registrar;
 import com.googlecode.objectify.impl.TypeUtils;
+import com.googlecode.objectify.impl.translate.EntityLoader;
 import com.googlecode.objectify.impl.translate.TranslatorRegistry;
 
 /**
@@ -180,6 +181,10 @@ public class ObjectifyFactory
 		this.registrar.register(clazz);
 	}
 
+	public <T> void registerLoader(Class<T> clazz, EntityLoader<T> loader) {
+		this.registrar.registerLoader(clazz, loader);
+	}
+
 	/**
 	 * Get the object that tracks memcache stats.
 	 */
@@ -203,6 +208,10 @@ public class ObjectifyFactory
 	 */
 	public <T> EntityMetadata<T> getMetadata(Class<T> clazz) throws IllegalArgumentException {
 		return this.registrar.getMetadataSafe(clazz);
+	}
+	
+	public <T> EntityLoader<T> getLoader(Class<T> clazz) {
+		return this.registrar.getLoader(clazz);
 	}
 
 	/**

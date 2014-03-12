@@ -11,6 +11,7 @@ import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.OnLoad;
 import com.googlecode.objectify.annotation.OnSave;
+import com.googlecode.objectify.impl.translate.EntityLoader;
 import com.googlecode.objectify.impl.translate.LoadContext;
 import com.googlecode.objectify.impl.translate.SaveContext;
 
@@ -118,7 +119,14 @@ public class ConcreteEntityMetadata<T> implements EntityMetadata<T>
 	@Override
 	public T load(Entity ent, final LoadContext ctx)
 	{
-		final T pojo = this.transmog.load(ent, ctx);
+		EntityLoader<T> loader = fact.getLoader(entityClass);
+		T p;
+		if (loader != null)
+			p = loader.load(ent);
+		else
+			p = this.transmog.load(ent, ctx);
+		
+		final T pojo = p;
 
 		// If there are any @OnLoad methods, call them after everything else
 		ctx.defer(new Runnable() {

@@ -8,6 +8,7 @@ import java.util.Deque;
 
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
+import com.googlecode.objectify.impl.translate.EntityLoader;
 
 /**
  * Holder of the master ObjectifyFactory and provider of the current thread-local Objectify instance.
@@ -60,6 +61,10 @@ public class ObjectifyService
 	 */
 	public static void register(Class<?> clazz) {
 		factory().register(clazz); 
+	}
+	
+	public static <T> void registerLoader(Class<T> clazz, EntityLoader<T> loader) {
+		factory().registerLoader(clazz, loader);
 	}
 	
 	/** Pushes new context onto stack when a transaction starts */

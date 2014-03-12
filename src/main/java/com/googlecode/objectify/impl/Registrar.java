@@ -8,6 +8,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.impl.translate.EntityLoader;
 
 /**
  * <p>Maintains information about registered entity classes<p>
@@ -31,6 +32,8 @@ public class Registrar
 
 	/** This maps class to EntityMetadata for all registered classes */
 	protected Map<Class<?>, EntityMetadata<?>> byClass = new HashMap<Class<?>, EntityMetadata<?>>();
+	
+	protected Map<Class<?>, EntityLoader<?>> loaders = new HashMap<>();
 
 	/** True if any @Cached entities have been registered */
 	protected boolean cacheEnabled;
@@ -88,7 +91,18 @@ public class Registrar
 			throw new IllegalArgumentException(clazz + " must be annotated with either @Entity or @EntitySubclass");
 		}
 	}
-
+	
+	public <T> void registerLoader(Class<T> clazz, EntityLoader<T> loader)
+	{
+		register(clazz);
+		loaders.put(clazz, loader);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> EntityLoader<T> getLoader(Class<T> clazz) {
+		return (EntityLoader<T>)loaders.get(clazz);
+	}
+	
 	/**
 	 * Recursively register classes in the hierarchy which have @EntitySubclass
 	 * or @Entity.  Stops when arriving at the first @Entity.  Safely handles
